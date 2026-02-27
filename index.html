@@ -331,10 +331,10 @@
     <div class="container">
         <div class="arch-box"><span class="hl">iPhone</span> (CodeReach app)
     |
-    |--- <span class="gr">LAN (Wi-Fi)</span> -------> daemon :9090 on any reachable machine
+    |--- <span class="gr">LAN (Wi-Fi)</span> -------> daemon on any reachable machine
     |
-    |--- <span class="gr">SSH tunnel</span> -------> Gateway -------> daemon (via frp reverse tunnel)
-         (works anywhere)      (FreeBSD)         (Linux, macOS, WSL2)</div>
+    |--- <span class="gr">Gateway tunnel</span> --> relay server --> daemon on any machine
+         (works anywhere)                        (Linux, macOS, WSL2)</div>
     </div>
 </section>
 
@@ -394,3 +394,4 @@
 
 </body>
 </html>
+
