@@ -286,15 +286,41 @@
 
 <section class="downloads">
     <div class="container">
-        <h2>Download Daemon Installer</h2>
+        <h2>Downloads</h2>
+
+        <h3 style="margin:1.5rem 0 .25rem">Desktop client <span class="card-desc" id="desktop-ver" style="font-weight:400"></span></h3>
+        <p style="margin-top:0">Native terminal, file, and GUI access from your computer.</p>
         <div class="card-grid">
-            <a class="card" id="card-rpm" href="https://github.com/wwallace04-projects/codereach-releases/releases/latest">
+            <a class="card" id="card-desktop-rpm" href="https://github.com/wwallace04-projects/codereach-releases/releases">
+                <div class="card-icon">&#128039;</div>
+                <div class="card-title">Linux x86_64 (RPM)</div>
+                <div class="card-desc">RHEL / Rocky / Alma 10 &middot; needs EPEL</div>
+                <div class="card-cmd">sudo dnf install epel-release &amp;&amp; sudo dnf install ./code-reach-*.el10.x86_64.rpm</div>
+            </a>
+            <a class="card" id="card-desktop-dmg" href="https://github.com/wwallace04-projects/codereach-releases/releases">
+                <div class="card-icon">&#63743;</div>
+                <div class="card-title">macOS (Apple Silicon)</div>
+                <div class="card-desc">Unsigned &middot; right-click &rarr; Open</div>
+                <div class="card-cmd">open CodeReach_*_aarch64.dmg</div>
+            </a>
+            <a class="card" id="card-desktop-exe" href="https://github.com/wwallace04-projects/codereach-releases/releases">
+                <div class="card-icon">&#9638;</div>
+                <div class="card-title">Windows x64</div>
+                <div class="card-desc">Unsigned &middot; SmartScreen &rarr; Run anyway</div>
+                <div class="card-cmd">CodeReach_*_x64-setup.exe</div>
+            </a>
+        </div>
+
+        <h3 style="margin:2rem 0 .25rem">Daemon <span class="card-desc" id="daemon-ver" style="font-weight:400"></span></h3>
+        <p style="margin-top:0">Install on each machine you want to reach.</p>
+        <div class="card-grid">
+            <a class="card" id="card-rpm" href="https://github.com/wwallace04-projects/codereach-releases/releases">
                 <div class="card-icon">&#128039;</div>
                 <div class="card-title">Linux x86_64 (RPM)</div>
                 <div class="card-desc">RHEL, Alma, Rocky, Fedora, WSL2</div>
                 <div class="card-cmd">sudo dnf install ./codereach-daemon-*.rpm</div>
             </a>
-            <a class="card" id="card-pkg" href="https://github.com/wwallace04-projects/codereach-releases/releases/latest">
+            <a class="card" id="card-pkg" href="https://github.com/wwallace04-projects/codereach-releases/releases">
                 <div class="card-icon">&#63743;</div>
                 <div class="card-title">macOS (Apple Silicon)</div>
                 <div class="card-desc">macOS 13+ on M1/M2/M3/M4</div>
@@ -371,21 +397,33 @@
 <script>
 (async () => {
     const REPO = 'wwallace04-projects/codereach-releases';
+    const RELEASES = `https://github.com/${REPO}/releases`;
+    const setHref = (id, url) => { const el = document.getElementById(id); if (el) el.href = url || RELEASES; };
     try {
-        const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
+        const res = await fetch(`https://api.github.com/repos/${REPO}/releases?per_page=40`);
         if (!res.ok) throw new Error(res.status);
-        const rel = await res.json();
-        const tag = rel.tag_name;
-
-        document.getElementById('version-badge').textContent = tag;
-
-        for (const a of rel.assets) {
-            if (a.name.endsWith('.rpm')) {
-                document.getElementById('card-rpm').href = a.browser_download_url;
-            } else if (a.name.endsWith('.pkg')) {
-                document.getElementById('card-pkg').href = a.browser_download_url;
+        const rels = await res.json();
+        const daemon = rels.find(r => !r.draft && !r.prerelease && /^v\d+\.\d+\.\d+$/.test(r.tag_name));
+        const desktop = rels.find(r => !r.draft && /^desktop-v/.test(r.tag_name));
+        if (daemon) {
+            document.getElementById('daemon-ver').textContent = daemon.tag_name;
+            for (const a of daemon.assets) {
+                if (a.name.endsWith('.rpm')) setHref('card-rpm', a.browser_download_url);
+                else if (a.name.endsWith('.pkg')) setHref('card-pkg', a.browser_download_url);
             }
         }
+        if (desktop) {
+            document.getElementById('desktop-ver').textContent = desktop.tag_name;
+            for (const a of desktop.assets) {
+                if (a.name.endsWith('.rpm')) setHref('card-desktop-rpm', a.browser_download_url);
+                else if (a.name.endsWith('.dmg')) setHref('card-desktop-dmg', a.browser_download_url);
+                else if (a.name.toLowerCase().endsWith('.exe')) setHref('card-desktop-exe', a.browser_download_url);
+            }
+        }
+        const parts = [];
+        if (desktop) parts.push('desktop ' + desktop.tag_name.replace('desktop-', ''));
+        if (daemon) parts.push('daemon ' + daemon.tag_name);
+        document.getElementById('version-badge').textContent = parts.join(' · ') || 'no release yet';
     } catch (e) {
         document.getElementById('version-badge').textContent = 'no release yet';
     }
