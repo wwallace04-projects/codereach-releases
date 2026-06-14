@@ -108,10 +108,25 @@
             padding: 6px 14px;
             border-radius: 6px;
             width: 100%;
+            overflow-wrap: anywhere;
         }
 
+        /* Desktop client: the four installers (RPM, Flatpak, .dmg, .exe) on a
+           single line as smaller, compact cards. minmax(0,1fr) keeps the long
+           install commands from blowing out a column (they wrap instead). */
+        .card-grid.desktop-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .card-grid.desktop-grid .card { padding: 18px 14px; }
+        .card-grid.desktop-grid .card-icon { font-size: 1.9rem; margin-bottom: 10px; }
+        .card-grid.desktop-grid .card-title { font-size: 1rem; margin-bottom: 4px; }
+        .card-grid.desktop-grid .card-desc { font-size: 0.8rem; margin-bottom: 10px; }
+        .card-grid.desktop-grid .card-cmd { font-size: 0.72rem; padding: 5px 9px; }
+
+        @media (max-width: 900px) {
+            .card-grid.desktop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
         @media (max-width: 600px) {
             .card-grid { grid-template-columns: 1fr; }
+            .card-grid.desktop-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -128,7 +143,7 @@
     <div class="container">
         <h3 style="margin:1.5rem 0 .25rem">Desktop client <span class="card-desc" id="desktop-ver" style="font-weight:400"></span></h3>
         <p style="margin-top:0">Native terminal, file, and GUI access from your computer.</p>
-        <div class="card-grid">
+        <div class="card-grid desktop-grid">
             <a class="card" id="card-desktop-rpm" href="https://github.com/wwallace04-projects/codereach-releases/releases">
                 <div class="card-icon">&#128039;</div>
                 <div class="card-title">Linux x86_64 (RPM)</div>
