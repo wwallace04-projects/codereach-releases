@@ -135,6 +135,12 @@
                 <div class="card-desc">RHEL / Rocky / Alma 10 &middot; needs EPEL</div>
                 <div class="card-cmd">sudo dnf install epel-release &amp;&amp; sudo dnf install ./code-reach-*.el10.x86_64.rpm</div>
             </a>
+            <a class="card" id="card-desktop-flatpak" href="https://github.com/wwallace04-projects/codereach-releases/releases">
+                <div class="card-icon">&#128230;</div>
+                <div class="card-title">Linux (Flatpak)</div>
+                <div class="card-desc">Rocky / Alma / RHEL 9 &amp; any distro</div>
+                <div class="card-cmd">flatpak install ./CodeReach_*_x86_64.flatpak</div>
+            </a>
             <a class="card" id="card-desktop-dmg" href="https://github.com/wwallace04-projects/codereach-releases/releases">
                 <div class="card-icon">&#63743;</div>
                 <div class="card-title">macOS (Apple Silicon)</div>
@@ -190,6 +196,7 @@
             document.getElementById('desktop-ver').textContent = desktop.tag_name;
             for (const a of desktop.assets) {
                 if (a.name.endsWith('.rpm')) setHref('card-desktop-rpm', a.browser_download_url);
+                else if (a.name.endsWith('.flatpak')) setHref('card-desktop-flatpak', a.browser_download_url);
                 else if (a.name.endsWith('.dmg')) setHref('card-desktop-dmg', a.browser_download_url);
                 else if (a.name.toLowerCase().endsWith('.exe')) setHref('card-desktop-exe', a.browser_download_url);
             }
